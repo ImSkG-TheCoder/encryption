@@ -1,11 +1,15 @@
 //jshint esversion:6
 
 // ........installed package being used here ......
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const encrypt = require("mongoose-encryption");
+
+
+console.log(process.env.SECRET);
 
 //..........defining files ........................
 app.use(bodyParser.urlencoded({extended:true}));
@@ -21,8 +25,8 @@ const userSchema = new mongoose.Schema({
     email : String,
     password :String
 });
-var secret = "thisistheyoursecretkeyandminnetoooo";
-userSchema.plugin(encrypt, { secret: secret,encryptedFields: ["password"]});
+
+userSchema.plugin(encrypt, { secret: process.env.SECRET,encryptedFields: ["password"]});
 
 const userModel = mongoose.model("User",userSchema);
 
@@ -82,6 +86,10 @@ app.post("/register",function(req,res){
     })
 })
 
+
+app.get("/logout",function(req,res){
+    res.redirect("/");
+})
 
 //...........starting server......................
 app.listen(8000,function(){
